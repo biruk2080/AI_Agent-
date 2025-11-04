@@ -1,24 +1,25 @@
-# LangChain Chatbot (chain_intro)
+# LangChain AI_Agent chatBot
 
 Small example project demonstrating a LangChain-based chatbot with:
 - OpenAI LLM (via langchain_openai)
 - Chroma vector store for retrieval
+- langcahin agent
 - A simple Gradio UI to interact with an agent composed of chains/tools
 
 ## Description
 
-This retrieval-augmented chatbot combines a LangChain agent, OpenAI chat models, and a local Chroma vector store to answer domain-specific questions. It routes queries to domain tools (Review, Operating_System, Waits (function call)), retrieves supporting documents, and produces grounded responses via prompt templates.
+This retrieval-augmented chatbot combines a LangChain agent, OpenAI chat models, and a local Chroma vector store to answer domain-specific questions. It routes queries to domain tools Review (hospitla review data), Operating_System (operating system book data), Waits(function calculate hospital waiting time)), retrieves supporting documents, and produces grounded responses via prompt templates.
+
 Features
 - Retrieval-augmented generation (RAG) using Chroma + OpenAI embeddings
-- Domain-specific chains (reviews, OS doc, personal/career)
+- Domain-specific chains (reviews, OS doc, wait functioanl call)
 - Tool-based agent orchestration with function-calling style agent
 - Gradio UI for local testing and sharing
-- Verbose agent mode to inspect intermediate steps for debugging
 
-How to populate Chroma (brief)
+How to populate Chroma
 - Collect documents (text / PDFs)
 - Create embeddings with OpenAIEmbeddings and persist via Chroma client
-- Ensure `chroma_data/` contains persisted collections before running chatbot
+- Ensure Chroma_data contains persisted collections before running chatbot
 
 Extending the bot
 - Add new domain/chains: create a new ChatPromptTemplate, wire a chain with the retriever, and expose it as a Tool.
@@ -32,13 +33,13 @@ Retriever-augmented pipelines: The app builds separate chains for different cont
   - Applies a ChatPromptTemplate to combine retrieved context with the user question
   - Invokes ChatOpenAI to produce the final answer
   - Parses output with StrOutputParser
-Vector store: Chroma persists embeddings at `chroma_data/`. OpenAI embeddings (OpenAIEmbeddings) are used to index documents and power the retriever (`as_retriever(k=10)`).
+Vector store: Chroma persists embeddings at chroma_data. OpenAI embeddings (OpenAIEmbeddings) are used to index documents and power the retriever as_retriever(k=10).
 
 Agent & Tools: create_openai_functions_agent + AgentExecutor wrap the chains as Tools:
   - Reviews -> reviews_chain.invoke (answers about patient reviews)
   - Operating_System -> os_chain.invoke (answers strictly from an "OPERATING SYSTEM" document)
-  - Waits -> get_current_wait_time (returns numeric wait times)
-  The agent can call tools programmatically and returns intermediate steps when executed.
+  - Waits -> get_current_wait_time (function call returns numeric wait times)
+The agent can call tools programmatically and returns intermediate steps when executed.
 UI: Gradio interface (`gr.Interface`) exposes ChatPot which sends user input into the agent executor and returns text responses.
 
 Prompt templates and safety
